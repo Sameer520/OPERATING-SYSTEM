@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define file_name "D:/file/saibu.dat"
+typedef struct employee
+{
+	int id;
+	float salary;
+	char name[100];
+};
+
+void addemp()
+{
+	FILE *f=fopen(file_name,"ab");
+	employee emp;
+	printf("Enter the Employee_Id:");
+	scanf("%d",&emp.id);
+	printf("Enter the Salary:");
+	scanf("%f",&emp.salary);
+	printf("Enter the Name:");
+	scanf("%s",emp.name);
+	fwrite(&emp,sizeof(emp),1,f);
+	printf("Employee Details Added Successfully!!!\n");
+	fclose(f);
+}
+void search()
+{
+	FILE *f=fopen(file_name,"rb");
+	employee emp;
+	int y=0,i;
+	printf("Enter the Employee Id to Search:");
+	scanf("%d",&i);
+	while(fread(&emp,sizeof(emp),1,f)==1)
+	{
+		if(emp.id==i)
+		{
+			printf("Employee-ID:%d\n",emp.id);
+			printf("Employee-Salary:%f\n",emp.salary);
+			printf("Employee-Name:%s\n",emp.name);
+			y=1;
+			break;
+		}
+	}
+	if(y==0)
+	{
+		printf("Employee Details Not Found!!!\n");
+	}
+}
+void update()
+{
+	FILE *f=fopen(file_name,"r+b");
+	int i,y=0;
+	employee emp;
+	printf("Enter the Employee id to Update:");
+	scanf("%d",&i);
+	while(fread(&emp,sizeof(emp),1,f)==1)
+	{
+		if(emp.id==i)
+		{
+			printf("Enter The New Salary:");
+			scanf("%f",&emp.salary);
+			printf("Enter the New Name:");
+			scanf("%s",emp.name);
+			fseek(f,-sizeof(emp),SEEK_CUR);
+			fwrite(&emp,sizeof(emp),1,f);
+			y=1;
+			printf("Employee Detais Found!!!\n");
+			break;
+		}
+	}
+	if(y==0) printf("Employee Details Not Found!!\n");
+	fclose(f);
+}
+void del()
+{
+	FILE *f=fopen(file_name,"r+b");
+	int i,y=0;
+	employee emp;
+	printf("Enter the Employee Id to Delete:");
+	scanf("%d",&i);
+	while(fread(&emp,sizeof(emp),1,f)==1)
+	{
+		if(emp.id==1)
+		{
+			emp.id=-1;
+			y=1;
+			fseek(f,-sizeof(emp),SEEK_CUR);
+			fwrite(&emp,sizeof(emp),1,f);
+			printf("File Deleted Successfully!!!");
+		}
+	}
+	if(y==0) printf("Employee Not Found");
+	fclose(f);
+}
+int main()
+{
+	int a;
+	while(1)
+	{
+		printf("1.ADD\n2.SEARCH\n3.UPDATE\n4.DELETE\nEnter Choice:");
+		scanf("%d",&a);
+		switch(a)
+		{
+			case 1:
+				addemp();
+				break;
+			case 2:
+				search();
+				break;
+			case 3:
+				update();
+				break;
+			case 4:
+				del();
+				break;
+		}
+	}
+}
