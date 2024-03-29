@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdbool.h>
+#define m_p 10
+#define m_r 10
+
+int main()
+{
+	int alloc[10][10],max[10][10],available[10],need[10][10],fin[10],work[10],seq[10],p,r;
+	printf("Enter the Number of Processes:");
+	scanf("%d",&p);
+	printf("Enter the Number of resources:");
+	scanf("%d",&r);
+	printf("Enter The Allocations:\n");
+	for(int i=0;i<p;i++)
+	{
+		for(int j=0;j<r;j++)
+		{
+			scanf("%d",&alloc[i][j]);
+		}
+	}
+	printf("Enter The Maximum:\n");
+	for(int i=0;i<p;i++)
+	{
+		for(int j=0;j<r;j++)
+		{
+			scanf("%d",&max[i][j]);
+		}
+	}
+	printf("Enter the Available:\n");
+	for(int i=0;i<r;i++)
+	{
+		scanf("%d",&available[i]);
+	}
+	for(int i=0;i<p;i++)
+	{
+		for(int j=0;j<r;j++)
+		{
+			need[i][j]=max[i][j]-alloc[i][j];
+		}
+	}
+	for(int i=0;i<p;i++)
+	{
+		fin[i]=0;
+	}
+	for(int i=0;i<r;i++)
+	{
+		work[i]=available[i];
+	}
+	int count=0,round=0;
+	while(round<2)
+	{
+		for(int i=0;i<p;i++)
+		{
+			int f=0;
+			if(fin[i]==0)
+			{
+				for(int j=0;j<r;j++)
+				{
+					if(need[i][j]>work[j])
+					{
+						f=1;
+						break;
+					}
+				}
+				if(f!=1)
+				{
+					for(int k=0;k<r;k++)
+					{
+						work[k]+=alloc[i][k];
+					}
+					fin[i]=1;
+					seq[count++]=i;
+				}
+			}
+		}
+		round++;
+	}
+	for(int i=0;i<p;i++)
+	{
+		if(fin[i]==0)
+		{
+			printf("The System is not in Safe State!!!");
+			return 0;
+		}
+	}
+	printf("The System is in Safe State\nSafe Sequence:");
+	for(int i=0;i<p;i++)
+	{
+		printf("%d ",seq[i]);
+	}
+}
