@@ -1,0 +1,18 @@
+#include<stdio.h>
+#include<fcntl.h>
+#include <string.h>
+int main()
+{
+	char fp[100]="D:/file/sathwik.txt";
+	int fd;
+	fd=open(fp,O_CREAT|O_TRUNC|O_WRONLY);
+	char buffer[100]="Hello World\n";
+	write(fd,buffer,strlen(buffer));
+	printf("Content Written Successfully!!!\n");
+	close(fd);
+	fd=open(fp,O_RDONLY);
+	read(fd,buffer,100);
+	buffer[strlen(buffer)-2]='\0';
+	printf("Data Read from file:%s",buffer);
+	close(fd);
+}
