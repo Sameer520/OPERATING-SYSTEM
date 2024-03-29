@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+typedef struct file
+{
+	int id;
+	char name[100];
+};
+typedef struct sub_dir
+{
+	file *files;
+	char name[100];
+	int count,max_count;
+};
+typedef struct dir
+{
+	sub_dir *sbd;
+	int count,max_count;
+};
+dir d;
+void print()
+{
+	if(d.count!=d.max_count)
+	{
+		for(int i=0;i<d.count;i++)
+		{
+			printf("Sub-Directory-Name:%s\n",d.sbd[i].name);
+			if(d.sbd[i].count!=0)
+			{
+				printf("Files in %s\n",d.sbd[i].name);
+				for(int j=0;j<d.sbd[i].count;j++)
+				{
+					printf("%s\n",d.sbd[i].files[j].name);
+				}
+			}
+			else
+			{
+				printf("Directory Empty\n");
+			}
+		}
+	}
+}
+void init()
+{
+	d.count=0;
+	d.max_count=10;
+	d.sbd=(sub_dir*)malloc(sizeof(sub_dir)*10);
+}
+void addsdir(char name[])
+{
+	sub_dir f;
+	f.count=0;
+	f.max_count=20;
+	f.files=(file*)malloc(sizeof(file)*20);
+	strncpy(f.name,name,100);
+	if(d.count!=d.max_count)
+	{
+		d.sbd[d.count]=f;
+		d.count++;
+	}
+	else
+	{
+		printf("Directory Limit Exceeded\n");
+	}
+}
+void addfile(int dc,int id,char name[])
+{
+	file f;
+	f.id=id;
+	strncpy(f.name,name,100);
+	if(d.sbd[dc].count!=d.sbd[dc].max_count)
+	{
+		d.sbd[dc].files[d.sbd[dc].count]=f;
+		d.sbd[dc].count++;
+	}
+	else
+	{
+		printf("File Limit Exceeeded\n");
+	}
+}
+void delfile(int dc,int fd)
+{
+	int f=0,i;
+	for(i=0;i<d.sbd[dc].count;i++)
+	{
+		if(d.sbd[dc].files[i].id==fd)
+		{
+			f=1;
+			break;
+		}
+	}
+	if(f==0)
+	{
+		for(int j=i;j<d.sbd[dc].count+1;j++)
+		{
+			d.sbd[dc].files[j]=d.sbd[dc].files[j+1];
+		}
+		d.sbd[dc].count--;
+		printf("File Deleted Successfully!!\n");
+	}
+	else
+	{
+		printf("File Not Found!!!\n");
+	}
+}
+void deldir(int dc)
+{
+	for(int i=dc;i<d.count+1;i++)
+	{
+		d.sbd[i]=d.sbd[i+1];
+	}
+	d.count--;
+	printf("Directory Deleted Successfully!!!\n");
+}
+int main()
+{
+	init();
+	char a[100],b[100];
+	int m,n,o;
+	while(1)
+	{
+		printf("1.ADDSUBDIR\n2.ADDFILE\n3.DELFILE\n4.DELDIR\n5.print\nEnter Choice:");
+		scanf("%d",&m);
+		switch(m)
+		{
+			case 1:
+				printf("Enter the Sub_Directory_Name:");
+				scanf("%s",a);
+				addsdir(a);
+				break;
+			case 2:
+				printf("Enter the Sub_Directory_Id:");
+				scanf("%d",&n);
+				printf("Enter the File Id and File Name:");
+				scanf("%d%s",&o,a);
+				addfile(n,o,a);
+				break;
+			case 3:
+				printf("Enter the Sub_directory_Id and File_Id:");
+				scanf("%d%d",&n,&o);
+				delfile(n,o);
+				break;
+			case 4:
+				printf("Enter the Directory_Id:");
+				scanf("%d",&n);
+				deldir(n);
+				break;
+			case 5:
+				print();
+				break;
+		}
+	}
+}
