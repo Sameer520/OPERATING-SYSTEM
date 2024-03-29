@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define num_blocks 20
+typedef struct memoryblock
+{
+	int id,size,free,allocated;
+};
+memoryblock memory[num_blocks];
+void initmemory()
+{
+	for(int i=0;i<num_blocks;i++)
+	{
+		memory[i].allocated=0;
+		memory[i].size=rand();
+		memory[i].id=-1;
+		memory[i].free=memory[i].size;
+	}
+}
+void firstfit(int pid,int size)
+{
+	int c=0;
+	for(int i=0;i<num_blocks;i++)
+	{
+		if(memory[i].allocated==0 && memory[i].size>=size)
+		{
+			memory[i].id=pid;
+			memory[i].allocated=1;
+			memory[i].free=memory[i].size-size;
+			c=1;
+			break;
+		}
+	}
+	if(c==0)
+	{
+		printf("Failed to Allocate Memory Using First Fit\n");
+	}
+}
+void bestfit(int pid,int size)
+{
+	int c=0,min=500000,index;
+	for(int i=0;i<num_blocks;i++)
+	{
+		if(memory[i].allocated==0 && memory[i].size>=size && min>memory[i].size-size)
+		{
+			min=memory[i].size-size;
+			index=i;
+			c=1;
+		}
+	}
+	if(c==1)
+	{
+		min=index;
+		memory[min].id=pid;
+		memory[min].allocated=1;
+		memory[min].free=memory[min].size-size;
+	}
+	else printf("Failed to Allocate Memory Using Best Fit\n");
+}
+void worstfit(int pid,int size)
+{
+	int c=0,max=0,index;
+	for(int i=0;i<num_blocks;i++)
+	{
+		if(memory[i].allocated==0 && max<memory[i].size-size && memory[i].size>=size)
+		{
+			max=memory[i].size-size;
+			index=i;
+			c=1;
+		}
+	}
+	if(c==1)
+	{
+		max=index;
+		memory[max].id=pid;
+		memory[max].allocated=1;
+		memory[max].free=memory[max].size-size;
+	}
+	else printf("Failed to Allocate Memory Using Worst Fit\n");
+}
+void print()
+{
+	printf("Size\t\tProcess_Id\t\tAllocated\t\tFree\n");
+	for(int i=0;i<num_blocks;i++)
+	{
+		printf("%d\t\t%d\t\t\t\t%d\t\t%d\n",memory[i].size,memory[i].id,memory[i].allocated,memory[i].free);
+	}
+}
+int main()
+{
+	initmemory();
+	int a,pid,size;
+	while(1)
+	{
+		printf("0.PRINTMEMORY\n1.FIRST_FIT\n2.BEST_FIT\n3.WORST_FIT\n4.exit\nEnter Choice:");
+		scanf("%d",&a);
+		if(a==4) return 0;
+		else if(a!=0)
+		{
+			printf("Enter the Process_id and Size:");
+			scanf("%d%d",&pid,&size);
+		}
+		switch(a)
+		{
+			case 0:
+				print();
+				break;
+			case 1:
+				firstfit(pid,size);
+				break;
+			case 2:
+				bestfit(pid,size);
+				break;
+			case 3:
+				worstfit(pid,size);
+				break;
+		}
+	}
+}
