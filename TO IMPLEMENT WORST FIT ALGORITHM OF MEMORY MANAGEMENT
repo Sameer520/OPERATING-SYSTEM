@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct memory
+{
+	int id,size,allocated,free;
+};
+memory m[20];
+void init()
+{
+	for(int i=0;i<20;i++)
+	{
+		m[i].allocated=0;
+		m[i].id=-1;
+		m[i].size=rand();
+		m[i].free=m[i].size;
+	}
+}
+void worst(int id,int size)
+{
+	int max=0,n,f=0;
+	for(int i=0;i<20;i++)
+	{
+		if(m[i].allocated==0 && max<m[i].size-size && m[i].size>=size)
+		{
+			max=m[i].size-size;
+			n=i;
+			f=1;
+		}
+	}
+	if(f==0)
+	{
+		printf("Unable to Allocate Memory!!!\n");
+	}
+	else
+	{
+		m[n].allocated=1;
+		m[n].free=m[n].size-size;
+		m[n].id=id;
+		printf("Allocated\n");
+	}
+}
+void print()
+{
+	printf("Size\t\tAllocated\t\tPID\t\tFREE\n");
+	for(int i=0;i<20;i++)
+	{
+		printf("%d\t\t%d\t\t\t%d\t\t%d\n",m[i].size,m[i].allocated,m[i].id,m[i].free);
+	}
+}
+int main()
+{
+	init();
+	int a,id,size;
+	while(1)
+	{
+		printf("1.Allocate\n2.List_Memory\n3.Exit\nEnter Choice:");
+		scanf("%d",&a);
+		switch(a)
+		{
+			case 1:
+				printf("Enter the PID and Size:");
+				scanf("%d%d",&id,&size);
+				worst(id,size);
+				break;
+			case 2:
+				print();
+				break;
+			default:
+				return 0;
+		}
+	}
+}
