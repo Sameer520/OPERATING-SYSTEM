@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <semaphore.h>
+#include <pthread.h>
+sem_t x,y;
+int rc;
+void* reader(void *arg)
+{
+	sem_wait(&x);
+	rc++;
+	if(rc==1)
+	sem_wait(&y);
+	sem_post(&x);
+	printf("Reader %d is Entered\n",rc);
+	sem_wait(&x);
+	rc--;
+	if(rc==0)
+	{
+		sem_post(&y);
+	}
+	sem_post(&x);
+	printf("%d Reader is Leaving\n");
+}
+void* writer(void *arg)
+{
+	printf("Writer has Entered\n");
+	sem_wait(&y);
+	printf("Writer is Writing\n");
+	sem_post(&y);
+	printf("Writer is Leaving\n");
+}
+int main()
+{
+	pthread_t rt[5],wt[5];
+	sem_init(&x,0,1);
+	sem_init(&y,0,1);
+	for(int i=0;i<5;i++)
+	{
+		pthread_create(&wt[i],NULL,reader,NULL);
+		pthread_create(&rt[i],NULL,writer,NULL);
+	}
+	for(int i=0;i<5;i++)
+	{
+		pthread_join(wt[i],NULL);
+		pthread_join(rt[i],NULL);
+	}
+}
